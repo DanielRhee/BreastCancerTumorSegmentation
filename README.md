@@ -12,6 +12,7 @@ The code is dependent on a conda environment using with python version 3.10.16
 - Pytorch v=2.5.1
 - Albumentations v= 1.4.20
 - Pillow v=11.1.0
+- Matplotlib v=3.10.0
 
 ## Tested On
 - MacOS ARM

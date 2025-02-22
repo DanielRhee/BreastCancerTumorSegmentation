@@ -4,21 +4,21 @@ from torch.utils.data import Dataset
 import numpy as np
 
 class CancerDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, transform=None):
-        self.image_dir = image_dir
-        self.mask_dir = mask_dir
+    def __init__(self, datasetDir, transform=None):
+        self.image_dir = datasetDir
+        self.mask_dir = datasetDir
         self.transform = transform
-        self.images = [file for file in os.listdir(image_dir) if file.lower().endswith('.png')]
+        self.images = [file for file in os.listdir(datasetDir) if file.lower().endswith('.png')]
     
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, index):
         img_path = os.path.join(self.image_dir, self.images[index])
-        mask_path = os.path.join(self.mask_dir, self.images[index].replace(".png", "_tumor.npz"))
+        mask_path = os.path.join(self.mask_dir, self.images[index].replace(".png", "_tumor.png"))
         
         image = np.array(Image.open(img_path).convert("RGB"))
-        masks = np.load(mask_path)['arr_0'].astype(np.float32)
+        masks = np.array(Image.open(mask_path).convert)
 
         if self.transform is not None:
             augmentations = self.transform(image=image, masks=masks)

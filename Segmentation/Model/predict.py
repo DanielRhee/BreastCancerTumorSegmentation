@@ -56,7 +56,7 @@ def predict_mask(model, image_raw, device="cpu"):
 
 def loadModel():
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
-    model.load_state_dict(torch.load("my_checkpoint.pth.tar", weights_only=True)["state_dict"])
+    model.load_state_dict(torch.load("cache.pth.tar", weights_only=True)["state_dict"])
     
     return model
 

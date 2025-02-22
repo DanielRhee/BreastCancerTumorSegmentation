@@ -24,14 +24,11 @@ else:
 BATCH_SIZE = 16
 NUM_EPOCHS = 20
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 160  # 1280 originally
-IMAGE_WIDTH = 240  # 1918 originally
+IMAGE_HEIGHT = 512
+IMAGE_WIDTH = 512
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "Data/train_images/"
-TRAIN_MASK_DIR = "Data/train_masks/"
-VAL_IMG_DIR = "Data/val_images/"
-VAL_MASK_DIR = "Data/val_masks/"
+IMG_DIR = "./Data/Raw"
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
@@ -51,7 +48,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         scaler.step(optimizer)
         scaler.update()
 
-        # update tqdm loop
         loop.set_postfix(loss=loss.item())
 
 
@@ -71,27 +67,12 @@ def main():
         ],
     )
 
-    val_transforms = A.Compose(
-        [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0,
-            ),
-            ToTensorV2(),
-        ],
-    )
-
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    train_loader, val_loader = get_loaders(
-        TRAIN_IMG_DIR,
-        TRAIN_MASK_DIR,
-        VAL_IMG_DIR,
-        VAL_MASK_DIR,
+    train_loader= get_loaders(
+        IMG_DIR,
         BATCH_SIZE,
         train_transform,
         val_transforms,
@@ -100,10 +81,10 @@ def main():
     )
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+        load_checkpoint(torch.load("cache.pth.tar"), model)
 
 
-    check_accuracy(val_loader, model, device=DEVICE)
+    check_accuracy(train_loader, model, device=DEVICE)
     scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(NUM_EPOCHS):
@@ -119,10 +100,6 @@ def main():
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
 
-        # print some examples to a folder
-        save_predictions_as_imgs(
-            val_loader, model, folder="saved_images/", device=DEVICE
-        )
 
 
 if __name__ == "__main__":

@@ -51,3 +51,6 @@ docs/_build/
 
 # Dataset
 Segmentation/Data/
+*.png
+.DS_Store
+data_aug.py

@@ -8,6 +8,7 @@ class CancerDataset(Dataset):
         self.image_dir = datasetDir
         self.mask_dir = datasetDir
         self.transform = transform
+        print(os.listdir(datasetDir))
         self.images = [file for file in os.listdir(datasetDir) if file.lower().endswith('.png')]
     
     def __len__(self):

@@ -5,12 +5,12 @@ from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
 from model import UNET
+import os
 from utils import (
     load_checkpoint,
     save_checkpoint,
     get_loaders,
     check_accuracy,
-    save_predictions_as_imgs,
 )
 
 LEARNING_RATE = 1e-4
@@ -18,6 +18,7 @@ LEARNING_RATE = 1e-4
 if torch.backends.mps.is_available():
     DEVICE = torch.device("mps")
 else:
+    DEVICE = "cpu"
     print ("MPS device not found.")
 
 #DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -28,7 +29,7 @@ IMAGE_HEIGHT = 512
 IMAGE_WIDTH = 512
 PIN_MEMORY = True
 LOAD_MODEL = False
-IMG_DIR = "./Data/Raw"
+IMG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
@@ -75,7 +76,6 @@ def main():
         IMG_DIR,
         BATCH_SIZE,
         train_transform,
-        val_transforms,
         NUM_WORKERS,
         PIN_MEMORY,
     )
@@ -98,7 +98,7 @@ def main():
         save_checkpoint(checkpoint)
 
         # check accuracy
-        check_accuracy(val_loader, model, device=DEVICE)
+        #check_accuracy(val_loader, model, device=DEVICE)
 
 
 

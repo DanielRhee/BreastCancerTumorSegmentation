@@ -24,9 +24,9 @@ else:
 #DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 16
 NUM_EPOCHS = 20
-NUM_WORKERS = 2
-IMAGE_HEIGHT = 512
-IMAGE_WIDTH = 512
+NUM_WORKERS = 4
+IMAGE_HEIGHT = 256
+IMAGE_WIDTH = 256
 PIN_MEMORY = True
 LOAD_MODEL = False
 IMG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
@@ -52,7 +52,29 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         loop.set_postfix(loss=loss.item())
 
 
-# train.py modifications
+
+def train_fn(loader, model, optimizer, loss_fn, scaler):
+    loop = tqdm(loader)
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.to(device=DEVICE)
+        targets = targets.float().to(device=DEVICE)
+        if len(targets.shape) > 4:
+            targets = targets.squeeze(-1)
+        
+        # forward
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = loss_fn(predictions, targets)
+
+        # backward
+        optimizer.zero_grad()
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+
+        loop.set_postfix(loss=loss.item())
+
 def main():
     train_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
@@ -67,12 +89,11 @@ def main():
         ToTensorV2(),
     ])
 
-    # Create model with 3 input channels and 1 output channel
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    train_loader= get_loaders(
+    train_loader = get_loaders(
         IMG_DIR,
         BATCH_SIZE,
         train_transform,
@@ -83,24 +104,21 @@ def main():
     if LOAD_MODEL:
         load_checkpoint(torch.load("cache.pth.tar"), model)
 
-
-    check_accuracy(train_loader, model, device=DEVICE)
     scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(NUM_EPOCHS):
+        print(f"Epoch {epoch+1}/{NUM_EPOCHS}")
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
 
         # save model
         checkpoint = {
             "state_dict": model.state_dict(),
-            "optimizer":optimizer.state_dict(),
+            "optimizer": optimizer.state_dict(),
         }
         save_checkpoint(checkpoint)
 
-        # check accuracy
-        #check_accuracy(val_loader, model, device=DEVICE)
-
-
+        # Check accuracy
+        check_accuracy(train_loader, model, device=DEVICE)
 
 if __name__ == "__main__":
     main()

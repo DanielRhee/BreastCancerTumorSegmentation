@@ -63,14 +63,3 @@ class UNET(nn.Module):
             x = self.ups[idx+1](concat_skip)
 
         return self.final_conv(x)
-
-def test():
-    x = torch.randn((3, 3, 160, 240))
-    model = UNET(in_channels=1, out_channels=1)
-    preds = model(x)
-    print(preds.shape)
-    print(x.shape)
-    assert preds.shape == (3, 7, 160, 240)
-
-if __name__ == "__main__":
-    test()

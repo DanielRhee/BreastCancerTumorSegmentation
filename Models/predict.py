@@ -1,7 +1,7 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from Segment.model import UNET
+from Models.Segment.model import UNET
 import numpy as np
 from PIL import Image
 import os
@@ -53,7 +53,7 @@ class predictor:
 
     def loadModel(self):
         model = UNET(in_channels=3, out_channels=1).to(self.DEVICE)
-        model.load_state_dict(torch.load("model.pth.tar", map_location=self.DEVICE)["state_dict"])
+        model.load_state_dict(torch.load("Models/model.pth.tar", map_location=self.DEVICE)["state_dict"])
         return model
 
     def create_overlay(self, original_image, mask, alpha=0.5, color=[1, 0, 0]):

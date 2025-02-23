@@ -67,7 +67,7 @@ for epoch in range(num_epochs):
 
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
-checkpoint = {
+checkpoint = {jjn
     "state_dict": model.state_dict(),
      "optimizer": optimizer.state_dict(),
 }

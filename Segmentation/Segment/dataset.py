@@ -16,18 +16,16 @@ class CancerDataset(Dataset):
         img_path = os.path.join(self.image_dir, self.images[index])
         mask_path = os.path.join(self.mask_dir, self.images[index].replace(".png", "_tumor.png"))
         
-        # Load grayscale image and repeat it 3 times to create 3 channels
         image = np.array(Image.open(img_path).convert("L"))
-        image = np.stack([image] * 3, axis=-1)  # Create 3 channels (H, W, 3)
+        image = np.stack([image] * 3, axis=-1)  
         
-        # Load and process mask
         mask = np.array(Image.open(mask_path).convert("L"))
         mask = (mask > 128).astype(np.float32)
         
         if self.transform is not None:
             augmentations = self.transform(image=image, mask=mask)
-            image = augmentations["image"]  # This will be in format (C, H, W)
-            mask = augmentations["mask"]    # This will be in format (H, W)
+            image = augmentations["image"] 
+            mask = augmentations["mask"] 
             
         # Ensure mask is in the correct format (C, H, W)
         mask = mask.unsqueeze(0) if isinstance(mask, torch.Tensor) else torch.from_numpy(mask).unsqueeze(0)

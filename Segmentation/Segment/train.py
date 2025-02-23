@@ -28,7 +28,7 @@ NUM_WORKERS = 4
 IMAGE_HEIGHT = 256
 IMAGE_WIDTH = 256
 PIN_MEMORY = True
-LOAD_MODEL = False
+LOAD_MODEL = True
 IMG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):

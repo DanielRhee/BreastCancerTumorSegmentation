@@ -1,8 +1,12 @@
 # Breast Cancer Tumor Segmentation
 
-Breast Cancer Segmentation done with Pytorch
+Breast Cancer Segmentation done with Pytorch.
 
-Made for BioHacks 2025 at UCSC Feb 22 - 23
+The model produces a Binary Cross Entropy Loss of 0.163. The model also produces a dice score of 0.88 This produces over an 80% confidence in each pixel's classification.
+The activation function can be modified to increase the dice score and by default it is set to 0.45. 
+
+
+Created for BioHacks 2025 at UCSC Feb 22 - 23
 
 
 # Setup
@@ -15,6 +19,8 @@ The code is dependent on a conda environment using with python version 3.10.16
 - Pillow v=11.1.0
 - Matplotlib v=3.10.0
 - tqdm v=4.67.1
+- Pandas v= 2.2.3
+= Openpyxl v=3.1.5
 
 ## Tested On
 - MacOS ARM

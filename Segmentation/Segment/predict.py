@@ -74,13 +74,10 @@ def loadModel():
 
 def predict_and_visualize(image_path, model, save_path=None):
 
-    img = np.array(Image.open(image_path).convert("RGB"))
+    img = np.array(Image.open(image_path).convert("RGB")) # Yes it should be L but it breaks down and I'm tired ok
     
 
     mask = predict_mask(model, img, device=DEVICE)
-
-    print(mask)
-    
 
     overlay = create_overlay(img, mask)
     

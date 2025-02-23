@@ -1,65 +1,64 @@
 import os
 import numpy as np
 from PIL import Image
+import shutil
+from natsort import natsorted
 
-# Combines all the masks for a given case
-def combine_masks(case_id, folder_path):
-    # List of all masks
-    masks = []
-    
-    # Load primary tumor file
-    primary_mask_path = os.path.join(folder_path, f"{case_id}_tumor.png")
-    if os.path.exists(primary_mask_path):
-        primary_mask = Image.open(primary_mask_path)  
-        masks.append(np.array(primary_mask))
-        
-    # Load additional tumors
-    for filename in os.listdir(folder_path):
-        if filename.startswith(case_id) and filename.endswith(".png") and 'other' in filename:
-            mask_path = os.path.join(folder_path, filename)
-            mask = Image.open(mask_path)  
-            masks.append(np.array(mask))
-    
-    # If no other tumor masks, return the original tumor mask
-    if not masks:
-        original_mask_path = os.path.join(folder_path, case_id + "_tumor.png")
-        return Image.open(original_mask_path)  # Kept in RGB mode
-    
-    # Combine masks by taking the max pixel value (union of all tumor areas)
-    # For each mask, if a pixel is white (255, 255, 255), we'll retain that
-    combined_mask = np.zeros_like(masks[0], dtype=np.uint8)
-    
-    for mask in masks:
-        combined_mask = np.maximum(combined_mask, mask)  # Combine the masks by taking max value for each pixel
-    
-    # Convert the combined mask back to an image
-    combined_mask_image = Image.fromarray(combined_mask)
-    return combined_mask_image
 
-def save_combined_masks_and_cases(original_folder, target_folder):
-    # Ensure target folder exists
-    if not os.path.exists(target_folder):
-        os.makedirs(target_folder)
+# Paths
+input_folder = "/Users/macuser/Documents/GitHub/BreastCancerTumorSegmentation/images/BC_imgsmasks_ready"
+output_folder = "/Users/macuser/Documents/GitHub/BreastCancerTumorSegmentation/images/BC_imgsmasks_readyc"
+os.makedirs(output_folder, exist_ok=True)
+
+
+def combine_masks(folder):
+    """Combines all mask variations into a single tumor mask per case, preserving original background format."""
+
+    all_files = natsorted(os.listdir(folder))
+    mask_dict = {}
+
+    # Sort and group masks by case ID
+    for filename in all_files:
+        if filename.endswith(".png") and ("_tumor" in filename or "_other" in filename):
+            case_id = filename.split("_tumor")[0].split("_other")[0]
+            if case_id not in mask_dict:
+                mask_dict[case_id] = []
+            mask_dict[case_id].append(filename)
+
+    for case_id in natsorted(mask_dict.keys()):  # Process in order
+        mask_files = natsorted(mask_dict[case_id])  # Ensure masks are ordered
+
+        if len(mask_files) > 1:
+            masks = [np.array(Image.open(os.path.join(folder, mf)).convert("L")) for mf in mask_files]
+
+            # Combine masks by taking the max pixel value (union of all tumor areas)
+            combined_mask = np.zeros_like(masks[0], dtype=np.uint8)
+            for mask in masks:
+                combined_mask = np.maximum(combined_mask, mask)
+
+            # Ensure background stays consistent with the original format
+            combined_mask = np.where(combined_mask > 0, 255, 150).astype(np.uint8)
+
+            # Save the final combined mask as caseXXX_tumor.png
+            combined_mask_image = Image.fromarray(combined_mask, mode="L")
+            final_mask_path = os.path.join(folder, f"{case_id}_tumor.png")
+            combined_mask_image.save(final_mask_path)
+
+            # Delete extra masks (keep only the new caseXXX_tumor.png)
+            for mask_file in mask_files:
+                if mask_file != f"{case_id}_tumor.png":
+                    os.remove(os.path.join(folder, mask_file))
+
+
+def copy_and_process_files():
+    """Copies all files to the new folder and processes masks"""
     
-    # Process all cases and save combined masks and original images
-    for filename in os.listdir(original_folder):
-        if filename.endswith("_tumor.png"):  
-            case_id = filename.split("_tumor.png")[0]  # Extract the case ID
-            
-            # Create combined mask for the case
-            combined_mask = combine_masks(case_id, original_folder)
-            
-            # Save the combined mask with the original name (case_id_tumor.png) in the target folder
-            combined_mask.save(os.path.join(target_folder, f"{case_id}_tumor.png"))
-            
-            # Copy the original ultrasound image of the case to the target folder
-            original_image_path = os.path.join(original_folder, f"{case_id}.png")
-            if os.path.exists(original_image_path):
-                original_image = Image.open(original_image_path)
-                original_image.save(os.path.join(target_folder, f"{case_id}.png"))
+    all_files = natsorted(os.listdir(input_folder))
 
-original_folder = "/Users/macuser/Documents/GitHub/BreastCancerTumorSegmentation/images/BC_imgsmasks"  # Path to the original images and masks
-target_folder = "/Users/macuser/Documents/GitHub/BreastCancerTumorSegmentation/images/BC_imgsmasks_ready"    # Path to the new folder where files will be saved
-save_combined_masks_and_cases(original_folder, target_folder)
+    for filename in all_files:
+        shutil.copy(os.path.join(input_folder, filename), os.path.join(output_folder, filename))
 
-print("✅ Masks successfully combined")
+    combine_masks(output_folder)
+
+
+copy_and_process_files()

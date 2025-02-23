@@ -15,14 +15,12 @@ class ClassifyCNN(nn.Module):
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1) 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)      
         
-        # After 2 pooling layers: 128/2/2 = 32
-        # So final feature map is 32x32x32
         self.fc1 = nn.Linear(32 * 32 * 32, 256)
         self.fc2 = nn.Linear(256, num_classes)
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        # Add shape printing for debugging
+
         x = self.pool(self.relu(self.conv1(x)))   
         x = self.pool(self.relu(self.conv2(x)))   
         x = x.view(-1, 32 * 32 * 32)             

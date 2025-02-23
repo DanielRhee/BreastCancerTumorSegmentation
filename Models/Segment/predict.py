@@ -1,7 +1,7 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from Segment.model import UNET
+from model import UNET
 import numpy as np
 from PIL import Image
 import os
@@ -69,6 +69,7 @@ def predict_mask(model, image_raw, device="cpu"):
 
 def loadModel():
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
+    print(torch.load("cache.pth.tar", map_location=DEVICE)["state_dict"].keys())
     model.load_state_dict(torch.load("cache.pth.tar", map_location=DEVICE)["state_dict"])
     return model
 

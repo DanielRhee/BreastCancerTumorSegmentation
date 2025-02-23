@@ -8,12 +8,16 @@ import pandas as pd
 class ClassifyDS(Dataset):
     def __init__(self, imgPath, labels, transform=None):
         self.dataframe = pd.read_csv(labels)
-        print(len(self.dataframe))
+        self.dataframe['Classification'] = self.dataframe['Classification'].replace({'benign': 0, 'malignant': 1, 'normal': 2})
+        #print(len(self.dataframe))
         self.imgPath = imgPath
         
         # Create a mapping of unique labels to numbers
         unique_labels = self.dataframe.iloc[:, 1].unique()
         self.label_to_idx = {label: idx for idx, label in enumerate(unique_labels)}
+        
+        # Create reverse mapping to print the label as a string
+        self.idx_to_label = {idx: label for label, idx in self.label_to_idx.items()}
         
         self.transform = transform
 
@@ -35,4 +39,7 @@ class ClassifyDS(Dataset):
         # Convert to tensor
         label = torch.tensor(label, dtype=torch.long)
 
+        # Print the class associated with the index
+        #print(f"Index {index} is associated with class '{self.idx_to_label[label.item()]}'")
+        
         return image, label

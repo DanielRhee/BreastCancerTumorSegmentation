@@ -19,6 +19,16 @@ else:
 num_classes = 3
 model = ClassifyCNN(num_classes=num_classes).to(DEVICE)
 
+imgPath = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
+labels = os.path.join(os.path.dirname(os.getcwd()), 'Data') + "/Classification.csv"
+
+class_counts = pd.read_csv(labels)['Classification'].value_counts()  
+class_weights = torch.tensor([1.0 / class_counts['benign'], 1.0 / class_counts['malignant'], 1.0 / class_counts['normal']], dtype=torch.float32).to(DEVICE)
+
+# Pass the class_weights to the criterion
+criterion = nn.CrossEntropyLoss(weight=class_weights)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -28,13 +38,12 @@ transform = transforms.Compose([
 ])
 
 
-imgPath = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
-labels = os.path.join(os.path.dirname(os.getcwd()), 'Data') + "/Classification.csv"
+
 dataset = dataset.ClassifyDS(imgPath= imgPath, labels=labels , transform=transform)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Training loop
-num_epochs = 25
+num_epochs = 10
 for epoch in range(num_epochs):
     for images, labels in dataloader:
         images = images.to(DEVICE)
@@ -52,8 +61,14 @@ for epoch in range(num_epochs):
         
         loss = criterion(outputs, labels)
         loss.backward()
+
+
         optimizer.step()
 
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
-torch.save(model.state_dict(), 'classify.pth.tar')
+checkpoint = {
+    "state_dict": model.state_dict(),
+     "optimizer": optimizer.state_dict(),
+}
+torch.save(checkpoint, "classify.pth.tar")

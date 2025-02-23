@@ -19,7 +19,7 @@ def open():
     entry_frame = Frame(root)
     image_path = filedialog.askopenfilename(initialdir="~", title="upload ultra sound image", filetypes=(("png", "*.png"), ("all files", "*,*")))
     original_image = ImageTk.PhotoImage(Image.open(image_path))
-    result_image, classification = model.predict(original_image)
+    result_image, classification = model.predict(Image.open(image_path).convert("RGB"))
     #this turns the image into a widget so it can be displayed
     result_label = Label(entry_frame)
     save_btn = Button(entry_frame, test= "save", command=save(result_image))

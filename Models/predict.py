@@ -2,6 +2,7 @@ import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from Models.Segment.model import UNET
+from Models.Classification.model import ClassifyCNN
 import numpy as np
 from PIL import Image
 import os
@@ -17,12 +18,14 @@ class predictor:
             print("cpu time :(")
             self.DEVICE = torch.device("cpu")
         self.model = self.loadModel()
+        self.classifyModel = self.loadClassification()
 
 
     def predict(self, image):
         img = np.array(image) 
 
         mask = self.predict_mask(self.model, img, device=self.DEVICE)
+        classOfTumor = self.getClassification(self.classifyModel, img)
 
         overlay = self.create_overlay(img, mask)
         
@@ -49,13 +52,40 @@ class predictor:
         # Convert buffer to PIL Image
         buf.seek(0)
         image = Image.open(buf)
-        return image, 0
+
+        
+
+        return image, classOfTumor
 
     def loadModel(self):
         model = UNET(in_channels=3, out_channels=1).to(self.DEVICE)
         model.load_state_dict(torch.load("Models/model.pth.tar", map_location=self.DEVICE)["state_dict"])
         return model
+    
+    def loadClassification(self):
+        model = ClassifyCNN(num_classes=3).to(self.DEVICE)
+        model.load_state_dict(torch.load("classify.pth.tar", map_location=self.DEVICE)["state_dict"])
+        model.eval()
+        return model
 
+    def preprocess_image(self, image):
+        transform = A.Compose([
+            A.Resize(128, 128),
+            A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),  # Update this if needed
+            ToTensorV2()
+        ])
+        augmented = transform(image=image)
+        return augmented["image"].unsqueeze(0).to(self.DEVICE)
+
+    def getClassification(self, model, image):
+        image_tensor = self.preprocess_image(image)
+        with torch.no_grad():
+            outputs = model(image_tensor)
+            predicted_class = torch.argmax(outputs, dim=1).item() 
+            probabilities = torch.softmax(outputs, dim=1)  
+        return predicted_class, probabilities
+
+    
     def create_overlay(self, original_image, mask, alpha=0.5, color=[1, 0, 0]):
         if original_image.max() > 1:
             original_image = original_image / 255.0

@@ -54,3 +54,5 @@ Segmentation/Data/
 *.png
 .DS_Store
 data_aug.py
+*.tar
+Models/Segment/model.pth.tar.zip

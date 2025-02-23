@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 import dataset
+from model import ClassifyCNN
 from torch.utils.data import DataLoader
 
 if torch.backends.mps.is_available():
@@ -15,26 +16,30 @@ else:
     DEVICE = "cpu"
     print ("MPS device not found.")
 
-num_classes = len(dataset.data_frame['label'].unique())
-model = dataset.ClassifyDS(num_classes=num_classes).to(DEVICE)
+num_classes = 3
+model = ClassifyCNN(num_classes=num_classes).to(DEVICE)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),  # Resize images to 128x128
+    transforms.Resize((128, 128)), 
     transforms.ToTensor(),
 ])
 
-# Create dataset and dataloaders
-dataset = dataset(csv_file=os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw'), root_dir='', transform=transform)
+
+imgPath = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
+labels = os.path.join(os.path.dirname(os.getcwd()), 'Data') + "/Classification.csv"
+dataset = dataset.ClassifyDS(imgPath= imgPath, labels=labels , transform=transform)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Training loop
 num_epochs = 10
 for epoch in range(num_epochs):
     for images, labels in dataloader:
-        images, labels = images.to(DEVICE), labels.to(DEVICE)
+        images = images.to(DEVICE)
+        print(labels)
+        labels = labels.to(DEVICE)
 
         optimizer.zero_grad()
         outputs = model(images)

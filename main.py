@@ -6,6 +6,7 @@ from Models import predict
 
 root = Tk()
 root.title("Breast Cancer Tumor Segmentation")
+content = Frame(root)
 model = predict.predictor()
 
 def save(result_image):
@@ -29,7 +30,7 @@ def open():
     save_btn.pack()
     entry_frame.pack()
 
-upload_btn = Button(root, text= "upload file", command= open()).pack()
+upload_btn = Button(content, text= "upload file", command= open()).pack()
 
 def main():
     root.mainloop()

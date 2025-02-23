@@ -4,7 +4,9 @@ from tkinter import filedialog
 from PIL import ImageTk, Image
 from Models import predict
 
-
+root = Tk()
+root.title("Breast Cancer Tumor Segmentation")
+model = predict.predictor()
 
 def save(result_image):
     file = filedialog.asksaveasfile(defaultextension=".png", 
@@ -27,10 +29,9 @@ def open():
     save_btn.pack()
     entry_frame.pack()
 
+upload_btn = Button(root, text= "upload file", command= open()).pack()
 
-
-def main(root):
-    upload_btn = Button(root, text= "upload file", command= open()).pack()
+def main():
     root.mainloop()
 
 if __name__ == "__main__":

@@ -106,7 +106,7 @@ def predict_and_visualize(image_path, model, save_path=None):
 if __name__ == "__main__":
     model = loadModel()
     
-    image_path = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw') + "/case014.png"
+    image_path = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw') + "/case093.png"
     save_path = 'pred.png'
     
     predict_and_visualize(image_path, model, save_path)

@@ -64,7 +64,7 @@ class predictor:
     
     def loadClassification(self):
         model = ClassifyCNN(num_classes=3).to(self.DEVICE)
-        model.load_state_dict(torch.load("classify.pth.tar", map_location=self.DEVICE)["state_dict"])
+        model.load_state_dict(torch.load("Models/classify.pth.tar", map_location=self.DEVICE)["state_dict"])
         model.eval()
         return model
 

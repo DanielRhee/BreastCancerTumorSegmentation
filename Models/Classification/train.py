@@ -34,15 +34,22 @@ dataset = dataset.ClassifyDS(imgPath= imgPath, labels=labels , transform=transfo
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Training loop
-num_epochs = 10
+num_epochs = 25
 for epoch in range(num_epochs):
     for images, labels in dataloader:
         images = images.to(DEVICE)
-        print(labels)
         labels = labels.to(DEVICE)
-
+        
+        # Print shapes for debugging
+        #print(f"Image batch shape: {images.shape}")
+        #print(f"Labels shape: {labels.shape}")
+        
         optimizer.zero_grad()
         outputs = model(images)
+        
+        # Print output shape
+        #print(f"Outputs shape: {outputs.shape}")
+        
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()

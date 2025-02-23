@@ -8,30 +8,31 @@ import pandas as pd
 class ClassifyDS(Dataset):
     def __init__(self, imgPath, labels, transform=None):
         self.dataframe = pd.read_csv(labels)
+        print(len(self.dataframe))
         self.imgPath = imgPath
-
-        #indices = self.dataframe["CaseID"].tolist()
-
-        #res = []
-        #for i in indices:
-        #    res.append(Image.open(imgPath + "/case" + str(i).zfill(3) + ".png"))
-        #self.dataframe["img"] = res
-
+        
+        # Create a mapping of unique labels to numbers
+        unique_labels = self.dataframe.iloc[:, 1].unique()
+        self.label_to_idx = {label: idx for idx, label in enumerate(unique_labels)}
+        
         self.transform = transform
 
     def __len__(self):
         return len(self.dataframe)
 
     def __getitem__(self, index):
+        # Get the string label
+        label_str = self.dataframe.iloc[index, 1]
+        # Convert to numerical label
+        label = self.label_to_idx[label_str]
         
-        label = self.dataframe.iloc[index, 1]
-        #print(label, self.dataframe.iloc[index, 0])
-
-        image = Image.open(self.imgPath + "/case" + str(self.dataframe.iloc[index, 0]).zfill(3) + ".png")
+        # Open image and convert to RGB
+        image = Image.open(self.imgPath + "/case" + str(self.dataframe.iloc[index, 0]).zfill(3) + ".png").convert('RGB')
 
         if self.transform:
             image = self.transform(image)
 
-        print(label)
+        # Convert to tensor
+        label = torch.tensor(label, dtype=torch.long)
 
         return image, label

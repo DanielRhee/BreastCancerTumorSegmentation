@@ -1,7 +1,7 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from model import UNET
+from Segment.model import UNET
 import numpy as np
 from PIL import Image
 import os

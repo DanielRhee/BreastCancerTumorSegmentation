@@ -14,7 +14,7 @@ The model also uses image classification to categorize tumors as normal, benign,
 
 Additionally, the model can segment multiple separate tumors as shown below: 
 
-!["Segmentation demonstration"][https://github.com/DanielRhee/BreastCancerTumorSegmentation/blob/main/Demo%20Images/demo1.png, "multiple tumor segmentation"]
+![Multi Tumor segmentation](https://github.com/DanielRhee/BreastCancerTumorSegmentation/blob/main/Demo%20Images/demo1.png)
 
 A lot was learned during the creation of this project. We had trouble getting the classification model to converge due to all tumors looking very similar and having a very small dataset. Some of the things we did to increase the model's accuracy was to augment the data and start a higher initial resolution for the UNET. We also learned a lot about the data processing pipeline, and how to combine different data sets as well as augment the data. The UNET was also a new project, and implementing one proved to be quite a challenge that required developing a greater understanding of computer vision and neural networks. Getting a multiplatform UI to work was difficult, and we sometimes had issues with merge conflicts while developing it. 
 

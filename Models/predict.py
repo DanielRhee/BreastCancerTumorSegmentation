@@ -83,7 +83,7 @@ class predictor:
             outputs = model(image_tensor)
             predicted_class = torch.argmax(outputs, dim=1).item() 
             probabilities = torch.softmax(outputs, dim=1)  
-        return predicted_class, probabilities
+        return predicted_class
 
     
     def create_overlay(self, original_image, mask, alpha=0.5, color=[1, 0, 0]):

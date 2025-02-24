@@ -64,6 +64,7 @@ def predict_mask(model, image_raw, device="cpu"):
     ])
     
     fullsize = upscale(image=mask)['image']
+    #fullsize = np.flip(fullsize, axis=1)
     
     return fullsize
 
@@ -104,7 +105,7 @@ def predict_and_visualize(image_path, model, save_path=None):
 if __name__ == "__main__":
     model = loadModel()
     
-    image_path = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw') + "/case093.png"
+    image_path = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw') + "/case005.png"
     save_path = 'pred.png'
     
     predict_and_visualize(image_path, model, save_path)

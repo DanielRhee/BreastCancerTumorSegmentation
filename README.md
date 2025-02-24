@@ -26,7 +26,7 @@ Training took place on an M3 Pro Macbook Pro with 18gb of memory. And took less 
 Clone the github directory and run main.py
 You can also run it commandline with predictTester.py
 
-Weights for the model are here and should be placed in the *Models* folder https://drive.google.com/drive/folders/1KvO7h8mVaqWvb6NenTkEt_x9AoeBcWiZ?usp=drive_link
+Weights for the models are here and should be placed in the *Models* folder https://drive.google.com/drive/folders/1KvO7h8mVaqWvb6NenTkEt_x9AoeBcWiZ?usp=drive_link
 
 ## Conda Environment
 The code was develped and tested in a conda environment using with python version 3.10.16

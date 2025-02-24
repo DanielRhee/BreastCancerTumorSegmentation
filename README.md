@@ -23,6 +23,8 @@ A lot was learned during the creation of this project. We had trouble getting th
 Training took place on an M3 Pro Macbook Pro with 18gb of memory. And took less than an hour for each.
 
 # Setup
+Clone the github directory and run main.py
+You can also run it commandline with predictTester.py
 ## Conda Environment
 The code was develped and tested in a conda environment using with python version 3.10.16
 ## Dependencies:

@@ -41,10 +41,10 @@ The code was develped and tested in a conda environment using with python versio
 
 
 Made by:
-@danielrhee Worked on machine learning \\
-@jacobjolani Worked on data processing \\
-@av248yaaa  Worked on data processing \\
-@ecbostrom Worked on user interface 
+@danielrhee Worked on machine learning &&
+@jacobjolani Worked on data processing &&
+@av248yaaa  Worked on data processing &&
+@ecbostrom Worked on user interface &&
 
 Created for BioHacks 2025 at UCSC Feb 22 - 23. Developed in less than 48 hours. 
 

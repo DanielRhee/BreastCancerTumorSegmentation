@@ -2,18 +2,19 @@
 
 Breast Cancer Segmentation done with Pytorch.
 
-Breast cancer is the 2nd most common type of cancer in women and had over 300k new cases estimated for 2025 in the US alone (1) (2). Breast cancer also has a mortality rate of 2.3%, making it critical that it is detected early and accurately (2). Breast cancer is often screened for with ultrasounds and is critical for initial diagnosis (3). Our project is Computer Aided Diagnoises (CADe) which can assist doctors in performing quick and accurate diagnoses (4). 
+Breast cancer is the 2nd most common type of cancer in women and had over 300k new cases estimated for 2025 in the US alone (1) (2). Breast cancer also has a mortality rate of 2.3%, making it critical that it is detected early and accurately (2). Breast cancer is often screened for with ultrasounds and is critical for initial diagnoses (3). Our project is Computer Aided Diagnoises (CADe) which can assist doctors in performing quick and accurate diagnoses (4). 
 
 Our project leverages Deep-Learning techniques including semantic image segmentation and image classification to accurately identify, locate, and classify the risk of tumors in breast cancer ultrasounds. This project aims to help healthcare professionals produce accurate diagnoises more quickly and more cheaply in order to allow patients to move towards treatment at an earlier stage of the cancer. 
 
-A custom UNET was written to perform semantic segmentation on the datasets used. The model produces a Binary Cross Entropy Loss of 0.163. The model also produces a dice score of 0.88 This produces over an 80% confidence in each pixel's classification.
-The activation function can be modified to increase the dice score and by default it is set to 0.45. 
+A custom UNET was written to perform semantic segmentation on the datasets used. The model produces a Binary Cross Entropy Loss of 0.163. The model also produces a dice score of 0.88 This means the model has over an 80% confidence in each pixel's classification and overlaps with test data for 88% of all pixels. The activation function can be modified to increase the dice score and by default it is set to 0.45. Additionally, the model can segment multiple separate tumors at once.
 
-The model also uses image classification to categorize tumors as normal, benign, or malignant with over 70% accuracy. The model is designed to be slightly biased towards identifying tumors as malignant in order to *increase* false positives and reduce the risk of an aggressive tumor being identified as of lower urgency. 
+The model also uses image classification to categorize tumors as normal, benign, or malignant with over 70% accuracy. The model is designed to be slightly biased towards identifying tumors as malignant in order to *increase* false positives and reduce the risk of an aggressive tumor being identified as of lower urgency.
+
+
 
 Additionally, the model can segment multiple separate tumors as shown below: 
 
-!["Segmentation demonstration"][github.com]
+!["Segmentation demonstration"][https://github.com/DanielRhee/BreastCancerTumorSegmentation/blob/main/Demo%20Images/demo1.png, "multiple tumor segmentation"]
 
 A lot was learned during the creation of this project. We had trouble getting the classification model to converge due to all tumors looking very similar and having a very small dataset. Some of the things we did to increase the model's accuracy was to augment the data and start a higher initial resolution for the UNET. We also learned a lot about the data processing pipeline, and how to combine different data sets as well as augment the data. The UNET was also a new project, and implementing one proved to be quite a challenge that required developing a greater understanding of computer vision and neural networks. Getting a multiplatform UI to work was difficult, and we sometimes had issues with merge conflicts while developing it. 
 
@@ -39,12 +40,12 @@ The code was develped and tested in a conda environment using with python versio
 
 
 Made by:
-@danielrhee 
-@jacobjolani 
-@av248yaaa 
-@ecbostrom 
+@danielrhee Worked on machine learning
+@jacobjolani Worked on data processing
+@av248yaaa  Worked on data processing
+@ecbostrom Worked on user interface
 
-Created for BioHacks 2025 at UCSC Feb 22 - 23
+Created for BioHacks 2025 at UCSC Feb 22 - 23. Developed in less than 48 hours. 
 
 
 

@@ -2,6 +2,10 @@
 
 Breast Cancer Segmentation done with Pytorch.
 
+This won best *AI/Machine Learning Applications in Genomics* project for UCSC BioHacks 2025 
+https://biohacks.devpost.com/
+
+
 Breast cancer is the 2nd most common type of cancer in women and had over 300k new cases estimated for 2025 in the US alone (1) (2). Breast cancer also has a mortality rate of 2.3%, making it critical that it is detected early and accurately (2). Breast cancer is often screened for with ultrasounds and is critical for initial diagnoses (3). Our project is Computer Aided Diagnoises (CADe) which can assist doctors in performing quick and accurate diagnoses (4). 
 
 Our project leverages Deep-Learning techniques including semantic image segmentation and image classification to accurately identify, locate, and classify the risk of tumors in breast cancer ultrasounds. This project aims to help healthcare professionals produce accurate diagnoises more quickly and more cheaply in order to allow patients to move towards treatment at an earlier stage of the cancer. 

@@ -2,6 +2,11 @@ import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from model import UNET
+from utils import (
+    get_loaders,
+    check_accuracy,
+)
+from dataset import CancerDataset
 import numpy as np
 from PIL import Image
 import os
@@ -33,22 +38,15 @@ def create_overlay(original_image, mask, alpha=0.5, color=[1, 0, 0]):
     
     return overlay
 
-def find_best_threshold(model, validation_images, validation_masks, device="cpu"):
+def find_best_threshold(model, loader, device="cpu"):
     best_threshold = 0.0
     best_dice = 0.0
     thresholds = np.arange(0.01, 0.99, 0.01)
     
     for threshold in thresholds:
-        dice_scores = []
-        for image, mask in zip(validation_images, validation_masks):
-            pred = predict_mask(model, image, device)
-            pred = (pred > threshold).astype(np.float32)
-            dice = calculate_dice(pred, mask)
-            dice_scores.append(dice)
-        
-        mean_dice = np.mean(dice_scores)
-        if mean_dice > best_dice:
-            best_dice = mean_dice
+        dice = check_accuracy(loader=loader, model=model)
+        if dice > best_dice:
+            best_dice = dice
             best_threshold = threshold
 
     print(f'best threshold: {best_threshold}')
@@ -127,11 +125,19 @@ def predict_and_visualize(image_path, model, save_path=None):
 
 if __name__ == "__main__":
     model = loadModel()
+    BATCH_SIZE = 16
+    NUM_EPOCHS = 20
+    NUM_WORKERS = 4
+    IMAGE_HEIGHT = 256
+    IMAGE_WIDTH = 256
+    PIN_MEMORY = True
+    LOAD_MODEL = True
+    ds = get_loaders(
+        os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw'),
+        BATCH_SIZE,
+        NUM_WORKERS,
+        PIN_MEMORY,
+    )
     
-    image_path = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw') + "/case093.png"
-    save_path = 'pred.png'
-    predict_and_visualize(image_path, model, save_path)
-
-    
-find_best_threshold(model, "/Users/tscjake/Downloads/Fixed_Testing_DS/benign/new_benign(3).jpg", "/Users/tscjake/Downloads/Fixed_Testing_DS/benign/new_benign(3)_mask.jpg",)
+    find_best_threshold(model=model, loader=ds)
     

@@ -29,7 +29,7 @@ IMAGE_HEIGHT = 256
 IMAGE_WIDTH = 256
 PIN_MEMORY = True
 LOAD_MODEL = True
-IMG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'Raw')
+IMG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'Data', 'New')
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)

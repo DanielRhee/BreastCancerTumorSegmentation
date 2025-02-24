@@ -16,15 +16,18 @@ def openImage():
     #entry_frame is a row with the png and associated buttons
     entry_frame = Frame(root)
     image_path = filedialog.askopenfilename(initialdir="~", title="upload ultra sound image", filetypes=(("png", "*.png"), ("all files", "*,*")))
-    original_image = ImageTk.PhotoImage(Image.open(image_path))
-    result_image, classification = model.predict(Image.open(image_path).convert("RGB"))
+    pillow_image = Image.open(image_path)
+    result_image, classification = model.predict(pillow_image.convert("RGB"))
     #this turns the image into a widget so it can be displayed
-    result_label = Label(entry_frame)
-    save_btn = Button(entry_frame, test= "save", command=save)
+
+    result_tkimage = ImageTk.PhotoImage(result_image)
+    result_label = Label(root, image=result_tkimage)
+    result_label.image = result_tkimage
+    #save_btn = Button(entry_frame, test= "save", command=save)
     #TODO add a delete button. this will likely include tracking and deleting the frame
     #the image and save button are packed onto a frame and then the frame is packed into the window
     result_label.pack()
-    save_btn.pack()
+    #save_btn.pack()
     entry_frame.pack()
 
 

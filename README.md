@@ -3,6 +3,7 @@
 Breast Cancer Segmentation done with Pytorch.
 
 This won best *AI/Machine Learning Applications in Genomics* project for UCSC BioHacks 2025 
+https://devpost.com/software/breast-cancer-tumor-identification-and-evaluation
 https://biohacks.devpost.com/
 
 
